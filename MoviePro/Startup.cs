@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MoviePro.Data;
 using MoviePro.Models.Settings;
+using MoviePro.Services;
+using MoviePro.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,14 +32,23 @@ namespace MoviePro
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDatabaseDeveloperPageExceptionFilter();
+                    ConnectionService.GetConnectionString(Configuration)));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDatabaseDeveloperPageExceptionFilter();
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultUI()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
+            //services.AddControllersWithViews();
+            services.AddRazorPages();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
+            services.AddTransient<SeedService>();
+            services.AddHttpClient();
+            services.AddScoped<IRemoteMovieService, TMDBMovieService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
