@@ -9,7 +9,7 @@ namespace MoviePro.Models.Settings
     {
         public string BaseUrl { get; set; }
         public string BaseImagePath { get; set; }
-        public string BaseYouTubePage { get; set; }
+        public string BaseYouTubePath { get; set; }
         public QueryOptions QueryOptions { get; set; }
     }
 
